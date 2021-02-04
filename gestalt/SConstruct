@@ -46,3 +46,6 @@ sc.SConscript(flag + '/sconscript', exports=['flag'])
 
 flag = 'analyze_gestalt'
 SConscript(flag + '/sconscript', exports=['flag'])
+
+flag = 'simulation_sanity'
+SConscript(flag + '/sconscript', exports=['flag'])

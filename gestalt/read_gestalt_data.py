@@ -269,6 +269,7 @@ def parse_reads_file_format_GSM(file_name,
     cell_state = CellState(categorical=CellTypeTree(0, rate=None))
     cell_states_dict = {"single_state": cell_state}
     all_alleles = []
+    reads_mapping = {}
     observed_alleles = dict()
     with open(file_name, "r") as f:
         reader = csv.reader(f, delimiter='\t')
@@ -288,6 +289,10 @@ def parse_reads_file_format_GSM(file_name,
                 bcode_meta,
                 bcode_min_pos,
                 merge_thres=merge_thres)
+            reads_mapping[obs_aligned_seq.get_allele_str()] = "_".join([
+                    row[target_start_idx + i]
+                    for i in range(NUM_BARCODE_V6_TARGETS)
+                ])
             obs_key = str(obs_aligned_seq)
             if obs_key not in observed_alleles:
                 observed_alleles[obs_key] = obs_aligned_seq
@@ -301,7 +306,7 @@ def parse_reads_file_format_GSM(file_name,
     organ_dict = {}
     for organ_str, cell_type in cell_states_dict.items():
         organ_dict[str(cell_type)] = organ_str
-    return obs_alleles_list, organ_dict
+    return obs_alleles_list, organ_dict, reads_mapping
 
 def parse_reads_file_format7B(file_name,
                               bcode_meta: BarcodeMetadata,
@@ -400,6 +405,7 @@ def main():
             num_barcodes = 1,
             cut_site = 6,
             crucial_pos_len=[6,6])
+    reads_mapping = {}
 
     if args.reads_format == 0:
         obs_leaves_cell_state, organ_dict = parse_reads_file_format7B(
@@ -414,7 +420,7 @@ def main():
             args.bcode_min_pos - args.bcode_pad_length,
             merge_thres=args.merge_thres)
     elif args.reads_format == 2:
-        obs_leaves_cell_state, organ_dict = parse_reads_file_format_GSM(
+        obs_leaves_cell_state, organ_dict, reads_mapping = parse_reads_file_format_GSM(
             args.reads_file,
             bcode_meta,
             args.bcode_min_pos - args.bcode_pad_length,
@@ -481,6 +487,7 @@ def main():
             "obs_leaves_by_allele_cell_state": obs_leaves_cell_state,
             "organ_dict": organ_dict,
             "time": args.time,
+            "reads_mapping": reads_mapping,
         }
         six.moves.cPickle.dump(out_dict, f, protocol = 2)
 

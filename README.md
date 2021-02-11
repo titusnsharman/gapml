@@ -17,6 +17,13 @@ You should install scons outside the virtual environment, for a python 2.\* or a
 Then activate the virtual environment and then run `scons ___`.
 
 You need to create a file `constant_paths.py` in the `gestalt` folder that provides the paths to the different executables. (mix and bhv distance calculators)
+For example:
+```
+MIX_PATH = "~/my_path/mix" # download from phylip website
+BHV_PATH = "~/my_path/gtp.jar" # download from http://comet.lehman.cuny.edu/owen/code.html
+RSPR_PATH = "~/my_path/rspr" # download from https://github.com/cwhidden/rspr
+```
+
 
 # GESTALT pipeline
 
